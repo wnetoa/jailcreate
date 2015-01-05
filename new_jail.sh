@@ -6,19 +6,16 @@ if [ $1 ] && [ $2 ] && [ $3 ]; then
         jail_name=$1
         jail_ip=$2
         jail_netmask=$3
-                echo "zfs create zroot/usr/jails/$jail_name"
                 echo "ifconfig bce0 $jail_ip netmask $jail_netmask alias"
-                #echo "echo '' >> /etc/rc.conf"
                 alias=$(grep alias /etc/rc.conf | cut -d "=" -f 1 | cut -d "_" -f 3 | cut -c 6-7 | sort -un | tail -1)
                 next_alias=$((alias+1))
                 echo "echo 'ifconfig_bce0_alias$next_alias=\"inet $jail_ip netmask $jail_netmask\" #$jail_name' >> /etc/rc.conf"
-                #echo "echo '' >> /etc/rc.conf"
-                
+
                 if [ $4 ]; then
                         jail_flav=$4
-                        echo "ezjail-admin create -f $jail_flav $jail_name $jail_ip"
+                        echo "ezjail-admin create -c zfs -f $jail_flav $jail_name $jail_ip"
                 else    
-                        echo "ezjail-admin create $jail_name $jail_ip"
+                        echo "ezjail-admin create -c zfs $jail_name $jail_ip"
                         echo
                         echo "kein flavor-name: du willst aber zumindest *das* hier:"
                         echo
